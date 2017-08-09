@@ -35,6 +35,12 @@ $options = array(
     "type" => "text"
   ),
   array(
+    "name" => "Youtube Channel",
+    "desc" => "If the link is https://www.youtube.com/channel/UCi6vwmo9kWRRGYEmFR0kuIQ use UCi6vwmo9kWRRGYEmFR0kuIQ",
+    "id"   => $shortname . "_youtube_id",
+    "type" => "text"
+  ),
+  array(
     "name" => "Twitter Handle",
     "desc" => "Twitter handle to link to. Example: If your handle is @okfn, use okfn",
     "id"   => $shortname . "_twitter_id",
