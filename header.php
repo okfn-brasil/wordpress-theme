@@ -34,6 +34,7 @@
               ?>
               <a class="discuss" href="https://discuss.okfn.org/<?php echo isset($theme_options['okfnwp_discuss_id']) ? $theme_options['okfnwp_discuss_id'] : ''; ?>"><i class="fa fa-comment-o fa-lg"></i></a> 
               <a class="facebook" href="https://www.facebook.com/<?php echo isset($theme_options['okfnwp_fb_id']) ? $theme_options['okfnwp_fb_id'] : 'OKFNetwork'; ?>"><i class="fa fa-facebook fa-lg"></i></a>
+              <a class="facebook" href="<?php echo isset($theme_options['okfnwp_channel_id']) ? $theme_options['okfnwp_channel_id'] : 'https://www.youtube.com/user/openknowledgefdn'; ?>"><i class="fa fa-youtube-play fa-lg"></i></a>
               <a class="twitter" href="https://twitter.com/<?php echo isset($theme_options['okfnwp_twitter_id']) ? $theme_options['okfnwp_twitter_id'] : 'okfn'; ?>"><i class="fa fa-twitter fa-lg"></i></a>
             </div>
           </nav>
