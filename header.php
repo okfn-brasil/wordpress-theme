@@ -20,7 +20,7 @@
     <div id="ok-panel" class="closed"><div class="container"><iframe src="//a.okfn.org/html/oki/panel/panel.html" scrolling="no"></iframe></div></div>
     <header class="header">
       <div class="container">
-        <div class="col-sm-7 col-md-8">
+        <div class="col-sm-6 col-md-7">
           <div id="header-brand">
             <?php okfn_theme_logo(); ?>
             <h1><a rel="home" href="<?php echo home_url(); ?>"><?php bloginfo('name'); ?></a></h1>
