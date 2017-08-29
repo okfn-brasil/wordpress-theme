@@ -128,15 +128,16 @@ function enqueue_stylesheets() {
           'lato-font', '//fonts.googleapis.com/css?family=Lato:400,700,900'
   );
 
-  wp_enqueue_style('stylesheet', get_stylesheet_uri());
+  wp_enqueue_style('stylesheet', get_template_directory_uri() . '/style.css', NULL, filemtime(get_stylesheet_directory() . '/style.css'));
 }
 
-add_action('wp_enqueue_scripts', 'enqueue_stylesheets');
+add_action('wp_print_styles', 'enqueue_stylesheets');
 
 /**
  * Enqueue scripts
  */
 function enqueue_scripts() {
+
   if (!is_admin()) {
     wp_deregister_script('jquery');
     wp_register_script(
@@ -421,8 +422,78 @@ function okfn_custom_meta_tags() {
   if (!empty($theme_options['okfnwp_meta'])):
     echo wp_specialchars_decode($theme_options['okfnwp_meta'], ENT_COMPAT);
   endif;
-  
 }
 
 // Remove WordPress generator meta tag to hide current WP version
 add_filter('the_generator', '__return_false');
+
+// Fix inconsistencies in the src and srcset content for images
+add_filter('wp_calculate_image_srcset_meta', '__return_null');
+
+// Add custom RSS feed
+add_feed('enclosure', 'oki_custom_rss2_feed');
+
+function oki_custom_rss2_feed() {
+  load_template(TEMPLATEPATH . '/oki-feed-rss2.php');
+}
+
+// Generate a permalink to an author image on Gravatar, with specific size
+function okfn_get_avatar_img_url($image_size) {
+  $user_id = get_the_author_meta('id');
+
+  if (validate_gravatar($user_id)):
+    return str_replace('http:', 'https:', esc_url(remove_query_arg(['d', 'r'], get_avatar_url($user_id, ['size' => $image_size]))));
+  endif;
+}
+
+/**
+ * Utility function to check if a gravatar exists for a given email or id
+ * @param int|string|object $id_or_email A user ID,  email address, or comment object
+ * @return bool if the gravatar exists or not
+ * https://gist.github.com/justinph/5197810
+ */
+function validate_gravatar($id_or_email) {
+  //id or email code borrowed from wp-includes/pluggable.php
+  $email = '';
+  if (is_numeric($id_or_email)) {
+    $id = (int) $id_or_email;
+    $user = get_userdata($id);
+    if ($user)
+      $email = $user->user_email;
+  } elseif (is_object($id_or_email)) {
+    // No avatar for pingbacks or trackbacks
+    $allowed_comment_types = apply_filters('get_avatar_comment_types', array('comment'));
+    if (!empty($id_or_email->comment_type) && !in_array($id_or_email->comment_type, (array) $allowed_comment_types))
+      return false;
+
+    if (!empty($id_or_email->user_id)) {
+      $id = (int) $id_or_email->user_id;
+      $user = get_userdata($id);
+      if ($user)
+        $email = $user->user_email;
+    } elseif (!empty($id_or_email->comment_author_email)) {
+      $email = $id_or_email->comment_author_email;
+    }
+  } else {
+    $email = $id_or_email;
+  }
+
+  $hashkey = md5(strtolower(trim($email)));
+  $uri = 'https://www.gravatar.com/avatar/' . $hashkey . '?d=404';
+
+  $data = wp_cache_get($hashkey);
+  if (false === $data) {
+    $response = wp_remote_head($uri);
+    if (is_wp_error($response)) {
+      $data = 'not200';
+    } else {
+      $data = $response['response']['code'];
+    }
+    wp_cache_set($hashkey, $data, $group = '', $expire = 60 * 5);
+  }
+  if ($data == '200') {
+    return true;
+  } else {
+    return false;
+  }
+}
