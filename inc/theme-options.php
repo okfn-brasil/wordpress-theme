@@ -35,6 +35,12 @@ $options = array(
     "type" => "text"
   ),
   array(
+    "name" => "Channel",
+    "desc" => "Full link",
+    "id"   => $shortname . "_channel",
+    "type" => "text"
+  ),
+  array(
     "name" => "Twitter Handle",
     "desc" => "Twitter handle to link to. Example: If your handle is @okfn, use okfn",
     "id"   => $shortname . "_twitter_id",
